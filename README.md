@@ -1,4 +1,4 @@
-# taggrs-tracking-tag-client
+# Taggrs Tracking Tag (Client)
 
 Taggrs is ontwikkeld voor en door marketeers. Ons doel is om de beste tracking toegankelijk te maken voor iedere bedrijf. Tracking kan je marketing campagnes maken of breken, maar goede tracking wordt steeds complexer. Veranderende wetgeving en nieuwe vereisten op het gebied van privacy, zorgen ervoor dat het verkrijgen van goede data steeds lastiger wordt.
 
