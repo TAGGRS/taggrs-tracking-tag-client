@@ -63,7 +63,7 @@ const queryPermission = require('queryPermission');
 const send_pixel = require('sendPixel');
 const JSON = require('JSON');
 
-const url = 'https://app.taggrs.io/api/v1/requests/client';
+const url = 'https://api.taggrs.io/api/v1/requests/client';
 const data_url = '?container_id=' + data.container_id + '&gtmTagId=' + data.gtmTagId + '&gtmEventId=' + data.gtmEventId + '&event_name=' + data.event_name;
 const total_url = url + data_url;
 
