@@ -101,7 +101,7 @@ ___WEB_PERMISSIONS___
             "listItem": [
               {
                 "type": 1,
-                "string": "https://app.taggrs.io/api/v1/*"
+                "string": "https://api.taggrs.io/api/v1/*"
               }
             ]
           }
