@@ -1,4 +1,4 @@
-___TERMS_OF_SERVICE___
+﻿___TERMS_OF_SERVICE___
 
 By creating or modifying this file you agree to Google Tag Manager's Community
 Template Gallery Developer Terms of Service available at
@@ -14,7 +14,9 @@ ___INFO___
   "version": 1,
   "securityGroups": [],
   "displayName": "TAGGRS tracking tag - client side",
-  "categories": ["ANALYTICS"],
+  "categories": [
+    "ANALYTICS"
+  ],
   "brand": {
     "id": "taggrs_client",
     "displayName": "Taggrs",
@@ -59,22 +61,85 @@ ___SANDBOXED_JS_FOR_WEB_TEMPLATE___
 
 // Geef hier uw templatecode op.
 const log = require('logToConsole');
-const queryPermission = require('queryPermission');
-const send_pixel = require('sendPixel');
+//const queryPermission = require('queryPermission');
+//const send_pixel = require('sendPixel');
+//const JSON = require('JSON');
+
+//const data_url = '?container_id=' + data.container_id + '&gtmTagId=' + data.gtmTagId + '&gtmEventId=' + data.gtmEventId + '&event_name=' + data.event_name;
+//const total_url = url + data_url;
+
+//log(data);
+//log(total_url);
+
+//if (queryPermission('send_pixel', total_url)) {
+//  log('Permission granted');
+//  send_pixel(total_url, data.gtmOnSuccess, data.gtmOnSuccess);
+//}
+// Roep data.gtmOnSuccess aan wanneer de tag is voltooid.const sendPixel = require('sendPixel');
+
+const encodeUriComponent = require('encodeUriComponent');
+const getCookieValues = require('getCookieValues');
+const getReferrerUrl = require('getReferrerUrl');
+const getType = require('getType');
+const getUrl = require('getUrl');
 const JSON = require('JSON');
+const makeTableMap = require('makeTableMap');
+const parseUrl = require('parseUrl');
+const sendPixel = require('sendPixel');
 
-const url = 'https://api.taggrs.io/api/v1/requests/client';
-const data_url = '?container_id=' + data.container_id + '&gtmTagId=' + data.gtmTagId + '&gtmEventId=' + data.gtmEventId + '&event_name=' + data.event_name;
-const total_url = url + data_url;
+const mergeObjects = (a, b) => {
+  for(let key in b) {
+    if(b.hasOwnProperty(key)) {
+      a[key] = b[key];
+    }
+  }
+  
+  return a;
+};
 
-log(data);
-log(total_url);
+const event = data.standardEvent || data.customEvent;
+const eventId = data.eventId;
+const id = data.id;
+const properties = getType(data.objectProperties) === 'object' ? data.objectProperties : {};
+const propertiesTable = data.objectPropertiesTable && data.objectPropertiesTable.length ? makeTableMap(data.objectPropertiesTable, 'name', 'value') : {};
+const mergedProperties = mergeObjects(properties, propertiesTable);
+const data_url_client = 'https://api.taggrs.io/api/v1/requests/client';
 
-if (queryPermission('send_pixel', total_url)) {
-  log('Permission granted');
-  send_pixel(total_url, data.gtmOnSuccess, data.gtmOnSuccess);
-}
-// Roep data.gtmOnSuccess aan wanneer de tag is voltooid.
+const transformData = () => {
+  let transformedUrl = data_url_client + '?v=1';
+  
+  const parameters = [
+    {key: 'container_id', value: data.container_id },
+    {key: 'gtmTagId', value: data.gtmTagId},
+    {key: 'gtmEventId', value: data.gtmEventId},
+    {key: 'event_name', value: data.event_name}
+  ];
+  
+  for(let parameter of parameters) {
+    if(parameter.value == undefined || parameter.value == '') {
+      continue;
+    }
+    
+    transformedUrl += '&' + parameter.key + '=' + encodeUriComponent(parameter.value);
+  }
+  
+  for(let property in mergedProperties) {
+    let value = mergedProperties[property];
+    
+    if(['array', 'object'].indexOf(getType(value)) > -1) {
+      value = JSON.stringify(value);
+    }
+    
+    transformedUrl += '&cd[' + property + ']=' + encodeUriComponent(value);
+  }
+  
+  return transformedUrl;
+};
+
+const url = transformData();
+log(url);
+
+sendPixel(url, data.gtmOnSuccess, data.gtmOnSuccess);
 
 
 ___WEB_PERMISSIONS___
@@ -129,8 +194,76 @@ ___WEB_PERMISSIONS___
         }
       ]
     },
+    "isRequired": true
+  },
+  {
+    "instance": {
+      "key": {
+        "publicId": "get_cookies",
+        "versionId": "1"
+      },
+      "param": [
+        {
+          "key": "cookieAccess",
+          "value": {
+            "type": 1,
+            "string": "any"
+          }
+        }
+      ]
+    },
     "clientAnnotations": {
       "isEditedByUser": true
+    },
+    "isRequired": true
+  },
+  {
+    "instance": {
+      "key": {
+        "publicId": "get_referrer",
+        "versionId": "1"
+      },
+      "param": [
+        {
+          "key": "urlParts",
+          "value": {
+            "type": 1,
+            "string": "any"
+          }
+        },
+        {
+          "key": "queriesAllowed",
+          "value": {
+            "type": 1,
+            "string": "any"
+          }
+        }
+      ]
+    },
+    "isRequired": true
+  },
+  {
+    "instance": {
+      "key": {
+        "publicId": "get_url",
+        "versionId": "1"
+      },
+      "param": [
+        {
+          "key": "urlParts",
+          "value": {
+            "type": 1,
+            "string": "any"
+          }
+        },
+        {
+          "key": "queriesAllowed",
+          "value": {
+            "type": 1,
+            "string": "any"
+          }
+        }
+      ]
     },
     "isRequired": true
   }
