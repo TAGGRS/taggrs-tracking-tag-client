@@ -2,8 +2,10 @@ homepage: "https://taggrs.io/"
 documentation: "https://support.taggrs.io"
 versions:
   # Latest version
+  - sha: 9f96b989f38e52f91bee2ca5a6b40653cc98fee7
+    changeNotes: Added GCS and GCD parameters.
+  # Older versions
   - sha: 28ace4e4d688da58a71d40099f95dcca39aeba5c
     changeNotes: Updated version.
-  # Older versions
   - sha: 498074327cb06f96bcee11d0ddc08ca3ff2da723
     changeNotes: Initial release.
